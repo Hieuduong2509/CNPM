@@ -5,6 +5,7 @@ $categoryMap = [
     'laptop' => 1,
     'Mouse' => 2,
     'Keyboard' => 3,
+    'PC'=>4
 ];
 
 $conn = create_connection();

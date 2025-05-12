@@ -3,9 +3,19 @@ session_start();
 require_once('./BE/db.php');
 var_dump($_GET['search'] ?? 'no search param');
 $conn=create_connection();
-$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
-$searchTerm = mysqli_real_escape_string($conn, $searchTerm); // sanitize
- $username = $_SESSION['username'];
+
+if($_SESSION['username']){
+  $username= $_SESSION['username'];
+}else{
+  $username= 'Tài Khoản';
+}
+$searchTerm = mysqli_real_escape_string($conn, $_GET['search'] ?? '');
+$categoryQuery = "SELECT categoryId FROM category WHERE name = ?";
+$stmt = $conn->prepare($categoryQuery);
+$stmt->bind_param("s", $searchTerm);
+$stmt->execute();
+$categoryResult = $stmt->get_result();
+
 
     $stmt = $conn->prepare("SELECT name FROM customer WHERE username = ?");
     $stmt->bind_param("s", $username);
@@ -119,10 +129,10 @@ $searchTerm = mysqli_real_escape_string($conn, $searchTerm); // sanitize
     <!-- Main menu -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto header-top-user_cart">
-        <li class="nav-item"><a class="nav-link" href="#">Laptop</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">PC gaming</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Màn hình</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">PC văn phòng</a></li>
+        
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=laptop">Laptop</a></li>
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=PC">PC gaming</a></li>
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=monitor">Màn hình</a></li>
         <li class="nav-item"><a class="nav-link" href="about.html">Giới thiệu</a></li>
       </ul>
     </div>
@@ -198,7 +208,15 @@ $searchTerm = mysqli_real_escape_string($conn, $searchTerm); // sanitize
     <div class="row ">
 
 <?php
-$sql = "SELECT product.* FROM product JOIN category ON product.categoryId = category.categoryId WHERE product.name LIKE '%$searchTerm%' OR category.name LIKE '%$searchTerm%'";
+if ($categoryResult && $categoryResult->num_rows > 0) {
+    // Exact match with category name
+    $catRow = $categoryResult->fetch_assoc();
+    $catId = $catRow['categoryId'];
+    $sql = "SELECT * FROM product WHERE categoryId = $catId";
+} else {
+    // Otherwise search by product name
+    $sql = "SELECT * FROM product WHERE name LIKE '%$searchTerm%'";
+}
 
 $result = mysqli_query($conn, $sql);
 

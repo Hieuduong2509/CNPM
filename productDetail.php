@@ -113,14 +113,21 @@ $product = $result->fetch_assoc();
             <!-- account and cart -->
             <div class="col-12 col-md-3 text-center text-md-right text-dark">
                 <ul class="list-inline mb-0">
-                    <li class="list-inline-item">
+
+<li class="list-inline-item">
   <?php if (isset($_SESSION['username'])): ?>
     <span class="text-muted"><i class="fa-solid fa-user"></i> <?= htmlspecialchars($username) ?></span>
   <?php else: ?>
     <a href="account.php"><i class="fa-solid fa-user"></i> Tài Khoản</a>
   <?php endif; ?>
 </li>
-                    <li class="list-inline-item"><a href="cart.php"><i class="fa-solid fa-cart-shopping"></i> <span class="dot-cart">0</span></a></li>
+
+<?php if (isset($_SESSION['username'])): ?>
+  <li class="list-inline-item">
+    <a href="logout.php" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+  </li>
+<?php endif; ?>
+                    <li class="list-inline-item"><a href="cart.php" class="text-dark"><i class="fa-solid fa-cart-shopping"></i> <span class="dot-cart">0</span></a></li>
                 </ul>
             </div>
         </div>
@@ -144,35 +151,37 @@ $product = $result->fetch_assoc();
     <!-- Main menu -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto header-top-user_cart">
-        <li class="nav-item"><a class="nav-link" href="#">Xây dựng cấu hình pc</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">PC gaming</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Màn hình</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Laptop</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">PC văn phòng</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Khuyến mãi</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Giới thiệu</a></li>
+        
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=laptop">Laptop</a></li>
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=PC">PC gaming</a></li>
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=monitor">Màn hình</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html">Giới thiệu</a></li>
       </ul>
     </div>
   </div>
 </nav>
 
 <!-- CATEGORY GRID -->
-<div class="container collapse " id="cate" >
+<div class="container collapse" id="cate">
   <div class="row">
     <?php 
       require_once("./BE/db.php");
       $conn = create_connection();
-      $sql = "SELECT * FROM category LIMIT 25";
-      $caterogy = $conn->query($sql);
+      $sql = "SELECT * FROM category";
+      $category = $conn->query($sql);
 
-      if ($caterogy && $caterogy->num_rows > 0) {
-          while ($row = $caterogy->fetch_assoc()) {
-              echo '<div class="col-6 col-md-2 mb-3">';
-              echo '<div class="border p-1 text-center text-white">' . htmlspecialchars($row['name']) . '</div>';
-              echo '</div>';
-          }
+      if ($category && $category->num_rows > 0) {
+          while ($row = $category->fetch_assoc()) { ?>
+            <div class="col-6 col-md-3 col-lg-2 mb-3">
+              <a href="productShow.php?search=<?=$row['name']?>">
+              <div class="category-box text-white text-center py-2 px-2 rounded shadow-sm border">
+                <?= htmlspecialchars($row['name']) ?>
+              </div>
+              </a>
+            </div>
+    <?php }
       } else {
-          echo '<div class="col-12 text-danger">Không có danh mục!</div>';
+        echo '<div class="col-12 text-danger">Không có danh mục!</div>';
       }
     ?>
   </div>
@@ -181,32 +190,10 @@ $product = $result->fetch_assoc();
 
 </div>
 
-<!-- Slider -->
-<section class="section-slider py-5 mt-5 pt-5">
-    <div class="container">
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide"><img class="img-fluid w-100" src="asset/images/30-4-trang-chu-pc.jpg" alt=""></div>
-                <div class="swiper-slide"><img class="img-fluid w-100" src="asset/images/banner-core-ultra.jpg" alt=""></div>
-                <div class="swiper-slide"><img class="img-fluid w-100" src="asset/images/banner-trang-chu-build-pc-30-4.jpg" alt=""></div>
-                <div class="swiper-slide"><img class="img-fluid w-100" src="asset/images/banner-trang-chu-tang-game.jpg" alt=""></div>
-                <div class="swiper-slide"><img class="img-fluid w-100" src="asset/images/banner-vga-rtx-5080-1.jpg" alt=""></div>
-                <div class="swiper-slide"><img class="img-fluid w-100" src="asset/images/WEB_BANNERTRANGCHUPCGAMINGGIATU8TR.jpg" alt=""></div>
-            </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-pagination"></div>
-            <div class="autoplay-progress">
-                <svg viewBox=""></svg>
-                <span></span>
-            </div>
-        </div>
-    </div>
-</section>
 
 
 <!-- Product Details -->
-<section class="py-5">
+<section class="py-5 mt-5 pt-5">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -266,33 +253,6 @@ $product = $result->fetch_assoc();
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<!-- swiper js -->
-<script>
-    const progressCircle = document.querySelector(".autoplay-progress svg");
-    const progressContent = document.querySelector(".autoplay-progress span");
-    var swiper = new Swiper(".mySwiper", {
-        spaceBetween: 30,
-        centeredSlides: true,
-        autoplay: {
-            delay: 2500,
-            disableOnInteraction: false
-        },
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true
-        },
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev"
-        },
-        on: {
-            autoplayTimeLeft(s, time, progress) {
-                progressCircle.style.setProperty("--progress", 1 - progress);
-                // progressContent.textContent = `${Math.ceil(time / 1000)}s`;
-            }
-        }
-    });
-</script>
 <script>
     // Hàm cập nhật số lượng sản phẩm trong giỏ hàng
     function updateCartCount() {

@@ -125,9 +125,7 @@
     <!-- Main menu -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto header-top-user_cart">
-        <?php 
-
-        ?>
+        
         <li class="nav-item"><a class="nav-link" href="productShow.php?search=laptop">Laptop</a></li>
         <li class="nav-item"><a class="nav-link" href="productShow.php?search=PC">PC gaming</a></li>
         <li class="nav-item"><a class="nav-link" href="productShow.php?search=monitor">Màn hình</a></li>
