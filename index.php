@@ -6,10 +6,8 @@
     if($conn->connect_error) {
         die("fail to connect" . $conn->connect_error);
     }
-    if(isset($_SESSION['username'])) {
-      $user = $_SESSION['username'];
-    } else {
-      $user = 'Tài Khoản';}
+
+    $username = $_SESSION['username'];
 
     $stmt = $conn->prepare("SELECT name FROM customer WHERE username = ?");
     $stmt->bind_param("s", $username);
@@ -123,37 +121,44 @@
     <!-- Main menu -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto header-top-user_cart">
-        <li class="nav-item"><a class="nav-link" href="#">Laptop</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">PC gaming</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Màn hình</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">PC văn phòng</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Giới thiệu</a></li>
+        <?php 
+
+        ?>
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=laptop">Laptop</a></li>
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=PC">PC gaming</a></li>
+        <li class="nav-item"><a class="nav-link" href="productShow.php?search=monitor">Màn hình</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html">Giới thiệu</a></li>
       </ul>
     </div>
   </div>
 </nav>
 
 <!-- CATEGORY GRID -->
-<div class="container collapse " id="cate" >
+<div class="container collapse" id="cate">
   <div class="row">
     <?php 
       require_once("./BE/db.php");
       $conn = create_connection();
       $sql = "SELECT * FROM category";
-      $caterogy = $conn->query($sql);
+      $category = $conn->query($sql);
 
-      if ($caterogy && $caterogy->num_rows > 0) {
-          while ($row = $caterogy->fetch_assoc()) {
-              echo '<div class="col-6 col-md-2 mb-3">';
-              echo '<div class="border p-1 text-center text-white">' . htmlspecialchars($row['name']) . '</div>';
-              echo '</div>';
-          }
+      if ($category && $category->num_rows > 0) {
+          while ($row = $category->fetch_assoc()) { ?>
+            <div class="col-6 col-md-3 col-lg-2 mb-3">
+              <a href="productShow.php?search=<?=$row['name']?>">
+              <div class="category-box text-white text-center py-2 px-2 rounded shadow-sm border">
+                <?= htmlspecialchars($row['name']) ?>
+              </div>
+              </a>
+            </div>
+    <?php }
       } else {
-          echo '<div class="col-12 text-danger">Không có danh mục!</div>';
+        echo '<div class="col-12 text-danger">Không có danh mục!</div>';
       }
     ?>
   </div>
 </div>
+
 
 
 </div>
@@ -198,18 +203,18 @@
             ?>
             
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <a href="productDetail.php?productId=<?= $pID ?>" class="text-decoration-none text-dark">
-                    <div class="card h-100">
-                        <img class="card-img-top img-fluid" src="asset/productImg/<?=$img?>" alt="Image">
-                        <div class="card-body">
-                            <h5 class="card-title"><?= $pname ?></h5>
-                            <h6 class="card-subtitle mb-2 text-muted">$<?= $price ?></h6>
-                            <p class="card-text"><?= $des ?></p>
-                            <p class="card-text"><small class="text-muted">Stock: <?= $stock ?></small></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
+              <a href="productDetail.php?productId=<?= $pID ?>" class="text-decoration-none text-dark">
+                  <div class="card h-100">
+                      <img class="card-img-top img-fluid" src="asset/productImg/<?=$img?>" alt="Image">
+                      <div class="card-body">
+                          <h5 class="card-title"><?= $pname ?></h5>
+                          <h6 class="card-subtitle mb-2 text-muted">$<?= $price ?></h6>
+                          <p class="card-text description"><?= $des ?></p>
+                          <p class="card-text stock"><small class="text-muted">Stock: <?= $stock ?></small></p>
+                      </div>
+                  </div>
+              </a>
+          </div>
             <?php } } ?>
         </div>
     </div>
@@ -271,7 +276,7 @@
         on: {
             autoplayTimeLeft(s, time, progress) {
                 progressCircle.style.setProperty("--progress", 1 - progress);
-                progressContent.textContent = `${Math.ceil(time / 1000)}s`;
+                // progressContent.textContent = `${Math.ceil(time / 1000)}s`;
             }
         }
     });
@@ -280,7 +285,8 @@
 // Hàm cập nhật số lượng sản phẩm trong giỏ hàng
 function updateCartCount() {
     // Lấy username hiện tại
-    const username = '<?= isset($_SESSION['username']) ? $_SESSION['username'] : "guest" ?>';
+    const username = <?= json_encode(isset($_SESSION['username']) ? $_SESSION['username'] : "guest") ?>;
+
     const cartStorageKey = 'cartItems_' + username;
     
     // Lấy số lượng sản phẩm trong giỏ hàng từ localStorage với key tương ứng với user
