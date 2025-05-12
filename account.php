@@ -24,12 +24,12 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         $stmt->bind_param("ss", $user, $pass);
 
         $stmt->execute();
-        $result = $stmt->get_result();  
+        $result = $stmt->get_result();      
 
         // Check if a user is found
         if ($result->num_rows >0) {
             if($user==='admin' and $pass=== 'admin123') {
-                header("Location: admin.html");
+                header("Location: admin.php");
                 exit();    
             }else if($user==='supplier' and $pass=== 'supplier123'){
                 header('Location: supplier.php');
