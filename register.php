@@ -12,6 +12,7 @@ $password= '';
 $emailUser= '';
 $name='';
 $phone='';
+$confirmpass='';
 $dob='';
 
 
@@ -20,7 +21,7 @@ if (isset($_POST['name']) && isset($_POST['phone'])&& isset($_POST['dateOfBirth'
     $phone = $_POST['phone'];
     $dob = $_POST['dateOfBirth'];
     $emailUser = $_POST['email'];
-    $username= $_POST['username'];
+    $username= $_POST['username']; 
     $password= $_POST['password'];
     $confirm= $_POST['confirmpass'];
     // Get user input from form
@@ -41,7 +42,7 @@ if (isset($_POST['name']) && isset($_POST['phone'])&& isset($_POST['dateOfBirth'
     else {
         echo'here';
         // Insert user into database safely
-        $stmt = $conn->prepare("INSERT INTO customer (name,email,phone,dateOfBirth,username, password) VALUES (?, ?, ?, ?,? ,?)");
+        $stmt = $conn->prepare("INSERT INTO customer (name, email, phone, dateOfBirth, username, password) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssidss", $name,$emailUser,$phone,$dob,$username, $password);
 
         if ($stmt->execute()) {
