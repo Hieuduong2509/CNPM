@@ -200,8 +200,8 @@ require_once("./BE/db.php");
         product.status = 'approved';
         console.log(`Approved product request ${productId}`);
         
-        // Lưu vào cơ sở dữ liệu
-        saveProductToDatabase(product, productId);
+        // Add to actual products (simulating database)
+        // In a real application, you would add this to your products table in the database
         
         localStorage.setItem('product_requests', JSON.stringify(productRequests));
         loadProductRequests(); // Reload the product requests
@@ -210,101 +210,6 @@ require_once("./BE/db.php");
       } catch (error) {
         console.error('Error approving product request:', error);
         alert('Có lỗi xảy ra khi phê duyệt sản phẩm.');
-      }
-    }
-    
-    // Save product to database
-    function saveProductToDatabase(product, productId) {
-      try {
-        // Show loading message
-        const loadingMsg = $('<div class="alert alert-info">Đang lưu sản phẩm vào cơ sở dữ liệu...</div>');
-        $('#supplierTableBody').before(loadingMsg);
-        
-        // Chuẩn bị dữ liệu sản phẩm để gửi đến server
-        const productData = {
-          product_name: product.product_name,
-          description: product.description || '',
-          price: parseFloat(product.price) || 0,
-          stockQuantity: parseInt(product.quantity) || 0,
-          category: product.category || '1',
-          image: product.image || '',
-          customer_name: product.supplier_name || '',
-          popular: 0 // Default value
-        };
-        
-        console.log('Sending product data to server:', JSON.stringify(productData));
-        
-        // Gửi đến server sử dụng fetch API
-        fetch('save_product.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(productData)
-        })
-        .then(response => {
-          console.log('Response status:', response.status);
-          return response.json();
-        })
-        .then(data => {
-          console.log('Server response:', data);
-          loadingMsg.remove();
-          
-          if (data.success) {
-            // Hiển thị thông báo thành công
-            const successMsg = $(`<div class="alert alert-success">Sản phẩm đã được lưu thành công với ID: ${data.productId}</div>`);
-            $('#supplierTableBody').before(successMsg);
-            
-            // Xóa thông báo sau 3 giây
-            setTimeout(() => {
-              successMsg.fadeOut(function() {
-                $(this).remove();
-              });
-            }, 3000);
-          } else {
-            // Hiển thị lỗi với thông tin debug
-            let errorDetails = '';
-            if (data.debug) {
-              errorDetails = '<button class="btn btn-sm btn-link" onclick="$(\'#debug-info\').toggle()">Hiển thị chi tiết lỗi</button>' + 
-                '<div id="debug-info" style="display:none"><pre>' + 
-                JSON.stringify(data.debug, null, 2) + '</pre></div>';
-            }
-            
-            const errorMsg = $(`<div class="alert alert-danger">
-              Lỗi: ${data.message || 'Không thể lưu sản phẩm'}
-              ${errorDetails}
-            </div>`);
-            $('#supplierTableBody').before(errorMsg);
-            
-            // Xóa thông báo lỗi sau 10 giây
-            setTimeout(() => {
-              errorMsg.fadeOut(function() {
-                $(this).remove();
-              });
-            }, 10000);
-          }
-        })
-        .catch(error => {
-          loadingMsg.remove();
-          console.error('Error saving product:', error);
-          
-          // Hiển thị thông báo lỗi
-          const errorMsg = $(`<div class="alert alert-danger">
-            <p>Lỗi kết nối: ${error.message}</p>
-            <p>Vui lòng kiểm tra kết nối mạng và thử lại sau.</p>
-            <p>Hãy kiểm tra console để xem chi tiết lỗi.</p>
-          </div>`);
-          $('#supplierTableBody').before(errorMsg);
-          
-          setTimeout(() => {
-            errorMsg.fadeOut(function() {
-              $(this).remove();
-            });
-          }, 10000);
-        });
-      } catch (error) {
-        console.error('Error preparing product data:', error);
-        alert('Có lỗi xảy ra khi chuẩn bị dữ liệu sản phẩm.');
       }
     }
     
@@ -812,7 +717,6 @@ require_once("./BE/db.php");
       loadOrders();
       loadProductRequests();
     });
-    
   </script>
 </body>
 </html>

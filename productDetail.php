@@ -284,7 +284,7 @@ $product = $result->fetch_assoc();
         on: {
             autoplayTimeLeft(s, time, progress) {
                 progressCircle.style.setProperty("--progress", 1 - progress);
-                progressContent.textContent = `${Math.ceil(time / 1000)}s`;
+                // progressContent.textContent = `${Math.ceil(time / 1000)}s`;
             }
         }
     });
@@ -325,8 +325,12 @@ $product = $result->fetch_assoc();
             window.location.href = 'account.php';
             return;
         <?php endif; ?>
+
+        // Get current username
         const username = '<?= isset($_SESSION['username']) ? $_SESSION['username'] : "guest" ?>';
         const cartStorageKey = 'cartItems_' + username;
+
+        // Get form data
         const formData = new FormData(this);
         const productData = {
             id: formData.get('productId'),

@@ -91,14 +91,13 @@ require_once("./BE/db.php");
                   <div class="form-group">
                     <label for="product_category">Loại sản phẩm</label>
                     <select class="form-control" id="product_category" name="product_category" required>
-                        <option value="">Chọn loại sản phẩm</option>
-                        <option value="1">Laptop</option>
-                        <option value="2">Mouse</option>
-                        <option value="3">Keyboard</option>
-                        <option value="4">Desktop</option>
-                        <option value="5">Linh kiện</option>
-                        <option value="6">Khác</option>
-                      </select>
+                      <option value="">Chọn loại sản phẩm</option>
+                      <option value="Laptop">Laptop</option>
+                      <option value="Desktop">Desktop</option>
+                      <option value="Phụ kiện">Phụ kiện</option>
+                      <option value="Linh kiện">Linh kiện</option>
+                      <option value="Khác">Khác</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -181,63 +180,61 @@ require_once("./BE/db.php");
         case 'rejected': return 'badge-cancelled';
         default: return 'badge-secondary';
       }
+    }$('#productForm').submit(function(e) {
+  e.preventDefault();
+  
+  const supplierName = $('#supplier_name').val();
+  const productName = $('#product_name').val();
+  const productCategory = $('#product_category').val();
+  const productQuantity = $('#product_quantity').val();
+  const productPrice = $('#product_price').val();
+  const productDescription = $('#product_description').val();
+  const productImage = $('#image-preview img').attr('src') || '';
+  
+  // Kiểm tra dữ liệu đầu vào
+  if (!supplierName || !productName || !productCategory || !productQuantity || !productPrice) {
+    alert('Vui lòng điền đầy đủ thông tin sản phẩm');
+    return;
+  }
+  
+  // Tạo đối tượng sản phẩm
+  const productRequest = {
+    supplier_name: supplierName,
+    product_name: productName,
+    category: productCategory,
+    price: parseFloat(productPrice),
+    quantity: parseInt(productQuantity),
+    description: productDescription,
+    image: productImage,
+    status: 'pending',
+    created_at: new Date().toLocaleString('vi-VN')
+  };
+  
+  // Lưu vào localStorage
+  let productRequests = [];
+  try {
+    productRequests = JSON.parse(localStorage.getItem('product_requests')) || [];
+    if (!Array.isArray(productRequests)) {
+      productRequests = [];
     }
-
-    $('#productForm').submit(function(e) {
-      e.preventDefault();
-      
-      const supplierName = $('#supplier_name').val();
-      const productName = $('#product_name').val();
-      const productCategory = $('#product_category').val();
-      const productQuantity = $('#product_quantity').val();
-      const productPrice = $('#product_price').val();
-      const productDescription = $('#product_description').val();
-      const productImage = $('#image-preview img').attr('src') || '';
-      
-      // Kiểm tra dữ liệu đầu vào
-      if (!supplierName || !productName || !productCategory || !productQuantity || !productPrice) {
-        alert('Vui lòng điền đầy đủ thông tin sản phẩm');
-        return;
-      }
-      
-      // Tạo đối tượng sản phẩm
-      const productRequest = {
-        supplier_name: supplierName,
-        product_name: productName,
-        category: productCategory,
-        price: parseFloat(productPrice),
-        quantity: parseInt(productQuantity),
-        description: productDescription,
-        image: productImage,
-        status: 'pending',
-        created_at: new Date().toLocaleString('vi-VN')
-      };
-      
-      // Lưu vào localStorage
-      let productRequests = [];
-      try {
-        productRequests = JSON.parse(localStorage.getItem('product_requests')) || [];
-        if (!Array.isArray(productRequests)) {
-          productRequests = [];
-        }
-      } catch (error) {
-        productRequests = [];
-      }
-      
-      productRequests.push(productRequest);
-      localStorage.setItem('product_requests', JSON.stringify(productRequests));
-      
-      // Thông báo thành công
-      alert('Sản phẩm đã được đăng thành công và đang chờ phê duyệt!');
-      
-      // Đặt lại form
-      $('#productForm')[0].reset();
-      $('#image-preview').html('');
-      $('.custom-file-label').text('Chọn file ảnh');
-      
-      // Tải lại danh sách sản phẩm đã đăng
-      loadProductSubmissions();
-    });
+  } catch (error) {
+    productRequests = [];
+  }
+  
+  productRequests.push(productRequest);
+  localStorage.setItem('product_requests', JSON.stringify(productRequests));
+  
+  // Thông báo thành công
+  alert('Sản phẩm đã được đăng thành công và đang chờ phê duyệt!');
+  
+  // Đặt lại form
+  $('#productForm')[0].reset();
+  $('#image-preview').html('');
+  $('.custom-file-label').text('Chọn file ảnh');
+  
+  // Tải lại danh sách sản phẩm đã đăng
+  loadProductSubmissions();
+});
 
     // Load product submissions from localStorage
     function loadProductSubmissions() {
@@ -297,6 +294,85 @@ require_once("./BE/db.php");
           reader.readAsDataURL(file);
           $('.custom-file-label').text(file.name);
         }
+      });
+      
+      // Submit product form
+      $('#productForm').submit(function(e) {
+        e.preventDefault();
+        
+        const products = [];
+        
+        // Get products from list
+        $('.product-item').each(function() {
+          const productName = $(this).find('.product-name').val();
+          const category = $(this).find('.product-category').val();
+          const price = parseFloat($(this).find('.product-price').val());
+          const quantity = parseInt($(this).find('.product-quantity').val());
+          const description = $(this).find('.product-description').val();
+          const image = $(this).find('.product-image').val();
+          
+          products.push({
+            product_name: productName,
+            category: category,
+            price: price,
+            quantity: quantity,
+            description: description,
+            image: image
+          });
+        });
+        
+        if (products.length === 0) {
+          alert('Vui lòng thêm ít nhất một sản phẩm vào danh sách');
+          return;
+        }
+        
+        const supplierName = $('#supplier_name').val();
+        
+        if (!supplierName) {
+          alert('Vui lòng nhập tên nhà cung cấp');
+          return;
+        }
+        
+        // Save each product as a separate request
+        let productRequests = [];
+        try {
+          productRequests = JSON.parse(localStorage.getItem('product_requests') || '[]');
+          if (!Array.isArray(productRequests)) {
+            productRequests = [];
+          }
+        } catch (error) {
+          productRequests = [];
+        }
+        
+        products.forEach(product => {
+          const productRequest = {
+            supplier_name: supplierName,
+            product_name: product.product_name,
+            category: product.category,
+            price: product.price,
+            quantity: product.quantity,
+            description: product.description,
+            image: product.image,
+            status: 'pending',
+            created_at: new Date().toLocaleString('vi-VN')
+          };
+          
+          productRequests.push(productRequest);
+        });
+        
+        localStorage.setItem('product_requests', JSON.stringify(productRequests));
+        
+        // Show success message
+        alert('Sản phẩm đã được đăng thành công và đang chờ phê duyệt!');
+        
+        // Reset form
+        $('#productForm')[0].reset();
+        $('#productContainer').empty();
+        $('#image-preview').html('');
+        $('.custom-file-label').text('Chọn file ảnh');
+        
+        // Reload product submissions
+        loadProductSubmissions();
       });
     });
   </script>
