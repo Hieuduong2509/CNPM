@@ -1,0 +1,227 @@
+:root {
+    --one-color-bg: rgb(50,120,246);
+    --two-color-bg: rgb(41,50,78);
+    --page-top-height: 30px;
+    --header-top-height: 70px;
+    --header-bottom-height: 30px;
+    --main-text-color: whitesmoke;
+    --line-space-color: rgb(243,243,243,0.5);
+
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* color: var(--main-text-color); */
+    font-family: Arial, Helvetica, sans-serif;
+}
+.container {
+    max-width: 90%;
+}
+a {
+    text-decoration: none;
+    color: unset;
+
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+input {
+    outline: none;
+}
+
+
+.section-slider {
+    padding-top: 200px; /* Adjust this based on total height of page-top + header + navbar */
+
+}
+
+/* .row-grid {
+    display: grid;
+    justify-content: space-between;
+}
+.row-flex {
+    display: flex;
+}
+.page-top {
+    background-color: var(--one-color-bg);
+}
+.page-top i {
+    margin-right: 6px;
+} 
+.page-top .row-grid {
+    justify-content: end;
+    height: var(--page-top-height);
+    align-items: center;
+}
+.page-top ul li:first-child {
+    position: relative;
+    padding-right: 12px;
+    margin-right: 12px;
+}
+.page-top ul li:first-child::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 2px;
+    height: 70%;
+    background-color: var(--line-space-color);
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}*/
+/* header {
+    background-color: var(--two-color-bg);
+}
+.header-top .row-grid {
+    height: var(--header-bottom-height);
+    grid-template-columns: 20% 60% 20%;
+    align-items: center;
+
+}
+.header-top-search.row-grid {
+    grid-template-columns: 80% 20%;
+}
+.header-top-search input {
+    height: 40px;
+    padding-left: 12px;
+}
+.header-top-search button {
+    height: 40px;
+    background-color: var(--one-color-bg);
+    border: none;
+    cursor: pointer;
+}
+.header-top-search button {
+    margin-left: 6px;
+}
+.header-top-user_cart .row-flex {
+    justify-content: flex-end;
+}*/
+
+.header-top-user_cart .nav-item {
+    position: relative;
+}
+
+/* line between acount and cart */
+.header-top-user_cart li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 60%;
+    background-color: var(--line-space-color); /* Replace with a color if variable not defined */
+}
+
+/* the dot */
+.dot-cart {
+    font-weight: bolder;
+    padding: 0 4px;
+    border-radius: 75%;
+    background-color: red;
+    color:white;
+}
+/* cart and user icon */
+/* .header-top-user_cart i {
+    margin-right: 6px;
+}
+.header-bottom .row-grid {
+    grid-template-columns: 20% 80%;
+    height: var(--header-bottom-height);
+    margin-top: 33px;
+}
+.header-bottom-menubar {
+    cursor: pointer;
+    margin-top: 6px;
+}
+.header-bottom-menubar span {
+    margin: 0 6px;
+}
+.header-bottom-menulist .row-flex{
+    justify-content: flex-start;
+}
+.header-bottom-menulist ul li {
+    padding: 6px 12px;
+    position: relative;
+}
+.header-bottom-menulist ul li::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 2px;
+    height: 50%;
+    background-color: var(--line-space-color);
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);  
+}
+.header-bottom-menulist ul li a {
+    position: relative;
+    font-weight: bold;
+    font-size: small;
+}
+.header-bottom-menulist ul li a::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: var(--line-space-color);
+    transform: translateY(-50%); 
+    bottom: -2px;
+    transition: 0.5s ease;
+}
+.header-bottom-menulist ul li:hover a::after {
+    width: 100%;
+} */
+
+#cate {
+   
+    background-color: rgba(56,60,68,1)
+}
+
+.swiper-slide img{
+    width: 100%;
+}
+
+/* product card */
+
+.hot-product {
+    margin: 30px 0;
+}
+.hot-product .container {
+    background-color: green;
+    padding: 2% ;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+#scrollTopBtn{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    z-index: 999;
+    transition: background-color 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    
+    
+}
+#scrollTopBtn:hover{
+    background-color: rgba(0, 0, 0, 0.8);
+}
