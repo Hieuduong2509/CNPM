@@ -7,7 +7,10 @@ session_start();
         die("fail to connect" . $conn->connect_error);
     }
 
-    $username = $_SESSION['username'];
+    if(isset($_SESSION['username'])) {
+      $user = $_SESSION['username'];
+    } else {
+      $user = 'Tài Khoản';}
 
     $stmt = $conn->prepare("SELECT name FROM customer WHERE username = ?");
     $stmt->bind_param("s", $username);
