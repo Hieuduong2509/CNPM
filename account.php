@@ -28,18 +28,17 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
         // Check if a user is found
         if ($result->num_rows >0) {
-            if($user==='ad' and $pass=== 'a') {
-                header("Location: admin.php");
+            if($user==='admin' and $pass=== 'admin123') {
+                header("Location: admin.html");
                 exit();    
-            }else if($user==='ss' and $pass=== 's'){
+            }else if($user==='supplier' and $pass=== 'supplier123'){
                 header('Location: supplier.php');
                 exit();
             }
             $_SESSION['username'] = $user;
             header("Location: index.php");
             exit(); 
-        }
-         else {
+        } else {
             $error = 'Incorrect username or password';
         }
 

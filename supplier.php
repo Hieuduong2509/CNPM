@@ -91,14 +91,13 @@ require_once("./BE/db.php");
                   <div class="form-group">
                     <label for="product_category">Loại sản phẩm</label>
                     <select class="form-control" id="product_category" name="product_category" required>
-                        <option value="">Chọn loại sản phẩm</option>
-                        <option value="1">Laptop</option>
-                        <option value="2">Mouse</option>
-                        <option value="3">Keyboard</option>
-                        <option value="4">Desktop</option>
-                        <option value="5">Linh kiện</option>
-                        <option value="6">Khác</option>
-                      </select>
+                      <option value="">Chọn loại sản phẩm</option>
+                      <option value="Laptop">Laptop</option>
+                      <option value="Desktop">Desktop</option>
+                      <option value="Phụ kiện">Phụ kiện</option>
+                      <option value="Linh kiện">Linh kiện</option>
+                      <option value="Khác">Khác</option>
+                    </select>
                   </div>
                 </div>
               </div>

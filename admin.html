@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Order Management & Product Approval</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .badge-confirmed { background-color: #28a745; }
+    .badge-pending { background-color: #ffc107; color: #212529; }
+    .badge-cancelled { background-color: #dc3545; }
+
+    .table-wrapper {
+      max-height: 600px;
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+
+    td, th {
+      word-break: break-word;
+      white-space: nowrap;
+    }
+
+    .table th:nth-child(2), .table td:nth-child(2) {
+      min-width: 180px;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar"> 
+    <div class="nav-right">
+      <a href="index.php">Trang chủ</a>
+    </div>
+  </header>
+  <div class="container-fluid mt-4">
+    <h2 class="mb-4 text-center">Bảng điều khiển quản trị</h2>
+    <div class="row">
+      <!-- Đơn hàng -->
+      <div class="col-lg-6 mb-4">
+        <h4 class="text-center">📦 Quản lý đơn hàng</h4>
+        <div class="table-wrapper border rounded p-2 bg-white">
+          <table class="table table-bordered table-hover text-center">
+            <thead class="thead-dark">
+              <tr>
+                <th>Khách hàng</th>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Thanh toán</th>
+                <th>Ngày</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="orderTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sản phẩm chờ duyệt -->
+      <div class="col-lg-6 mb-4">
+        <h4 class="text-center">⏳ Sản phẩm chờ duyệt</h4>
+        <div class="table-wrapper border rounded p-2 bg-white">
+          <table class="table table-bordered table-hover text-center">
+            <thead class="thead-dark">
+              <tr>
+                <th>Tên sản phẩm</th>
+                <th>Loại</th>
+                <th>Giá</th>
+                <th>Số Lượng</th>
+                <th>Trạng Thái</th>
+              </tr>
+            </thead>
+            <tbody id="pendingProductBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Load đơn hàng từ PHP
+    fetch('get_orders.php')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById('orderTableBody');
+        data.forEach(order => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${order.customer_name}</td>
+            <td>${order.product_name}</td>
+            <td>${order.quantity}</td>
+            <td>${order.payment_method}</td>
+            <td>${order.created_at}</td>
+            <td><span class="badge ${getStatusClass(order.status)}">${order.status}</span></td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+
+    function getStatusClass(status) {
+      switch (status.toLowerCase()) {
+        case 'đồng ý': return 'badge-confirmed';
+        case 'đang xác nhận': return 'badge-pending';
+        case 'hủy': return 'badge-cancelled';
+        default: return 'badge-secondary';
+      }
+    }
+
+    // Load sản phẩm supplier chờ duyệt từ localStorage
+    const pendingProducts = JSON.parse(localStorage.getItem('supplierProducts') || '[]');
+    const pendingBody = document.getElementById('pendingProductBody');
+    pendingProducts.forEach((p, index) => {
+      if (p.status === 'pending') {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${p.name}</td>
+          <td>${p.category}</td>
+          <td>₫${parseInt(p.price).toLocaleString()}</td>
+          <td>
+            <button class="btn btn-sm btn-success" onclick="approve(${index})">✔</button>
+            <button class="btn btn-sm btn-danger" onclick="reject(${index})">✖</button>
+          </td>
+        `;
+        pendingBody.appendChild(row);
+      }
+    });
+
+    function approve(index) {
+      pendingProducts[index].status = 'approved';
+      localStorage.setItem('supplierProducts', JSON.stringify(pendingProducts));
+      location.reload();
+    }
+
+    function reject(index) {
+      pendingProducts.splice(index, 1);
+      localStorage.setItem('supplierProducts', JSON.stringify(pendingProducts));
+      location.reload();
+    }
+  </script>
+</body>
+</html>

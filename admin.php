@@ -717,7 +717,6 @@ require_once("./BE/db.php");
       loadOrders();
       loadProductRequests();
     });
-    
   </script>
 </body>
 </html>
